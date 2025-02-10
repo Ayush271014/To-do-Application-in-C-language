@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_TASKS 100
+#define TASK_LENGTH 100
+typedef struct {
+    char task[TASK_LENGTH];
+} Task;
+
+
+void addTask(Task tasks[], int *taskCount);
+void viewTasks(Task tasks[], int taskCount);
+void deleteTask(Task tasks[], int *taskCount);
+void menu();
+
+int main() {
+    Task tasks[MAX_TASKS];  
+    int taskCount = 0;      
+
+    int choice;
+    while (1) {
+        menu();
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();  
+
+        switch (choice) {
+            case 1:
+                addTask(tasks, &taskCount);
+                break;
+            case 2:
+                viewTasks(tasks, taskCount);
+                break;
+            case 3:
+                deleteTask(tasks, &taskCount);
+                break;
+            case 4:
+                printf("Exiting the application.\n");
+                return 0;
+            default:
+                printf("Invalid choice, please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+void menu() {
+    printf("\nTo-Do Application\n");
+    printf("1. Add Task\n");
+    printf("2. View Tasks\n");
+    printf("3. Delete Task\n");
+    printf("4. Exit\n");
+}
+
+void addTask(Task tasks[], int *taskCount) {
+    if (*taskCount >= MAX_TASKS) {
+        printf("Task limit reached, cannot add more tasks.\n");
+        return;
+    }
+
+    printf("Enter task description: ");
+    fgets(tasks[*taskCount].task, TASK_LENGTH, stdin);
+    tasks[*taskCount].task[strcspn(tasks[*taskCount].task, "\n")] = '\0';  
+    (*taskCount)++;
+    printf("Task added successfully!\n");
+}
+
+void viewTasks(Task tasks[], int taskCount) {
+    if (taskCount == 0) {
+        printf("No tasks to display.\n");
+        return;
+    }
+
+    printf("\nTasks List:\n");
+    for (int i = 0; i < taskCount; i++) {
+        printf("%d. %s\n", i + 1, tasks[i].task);
+    }
+}
+
+void deleteTask(Task tasks[], int *taskCount) {
+    if (*taskCount == 0) {
+        printf("No tasks to delete.\n");
+        return;
+    }
+
+    int taskIndex;
+    printf("Enter the task number to delete: ");
+    scanf("%d", &taskIndex);
+    getchar();  
+
+    if (taskIndex < 1 || taskIndex > *taskCount) {
+        printf("Invalid task number.\n");
+        return;
+    }
+
+  
+    for (int i = taskIndex - 1; i < *taskCount - 1; i++) {
+        strcpy(tasks[i].task, tasks[i + 1].task);
+    }
+    (*taskCount)--;
+
+    printf("Task deleted successfully.\n");
+}
